@@ -205,12 +205,12 @@ void WSG50Controller::updateHandler(void)
     // declare variables
     TRESPONSE resp;
 
-    if(false) {
+    //if(false) {
         std::cout << ("Controller::updateHandler(): called.");
         std::cout << ("Controller::updateHandler(): Response Status Id: %02X", _resp.id);
         std::cout << ("Controller::updateHandler(): Response Data Length: %d", _resp.length);
         _wsgComm->printHexArray(_resp.data, _resp.length);
-    }
+    //}
 
     // copy data into internal TRESPONSE message.
     //

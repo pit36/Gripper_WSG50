@@ -1,6 +1,8 @@
 // my second program in C++
 #include <iostream>
 #include "WSG50Controller.h"
+#include <chrono>
+#include <thread>
 WSG50Controller *_wSG50Controller;
 int main ()
 {
@@ -13,4 +15,5 @@ int main ()
   float width = 25.0;
   _wSG50Controller = new WSG50Controller("172.31.1.150", "1000");
   _wSG50Controller->grasp(width, speed);
+  std::this_thread::sleep_for (std::chrono::seconds(1));
 }
