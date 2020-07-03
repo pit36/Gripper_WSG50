@@ -223,9 +223,10 @@ void WSG50Controller::updateHandler(void)
     }
     // unlock mutex
     _responseMutex.unlock();
-
+	std::cout << "RespIdCode:   " << resp.id << std::endl;
     switch (resp.id) {
     case 0x06: // _LOOP
+        std::cout << "it's a loop" << std::endl;
         if(this->_checkingCommunication) {
             // we are currently checking the communication
 
@@ -604,8 +605,8 @@ bool WSG50Controller::isCommunicationOk()
     // loop and check for response
     //
     // waiting for xx milisec
-    millisec = 10;
-    timeoutInMillisec = 2000;
+    millisec = 100;
+    timeoutInMillisec = 4000;
     counter = 0;
     while(_checkingCommunication)
     {

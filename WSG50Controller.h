@@ -212,8 +212,8 @@ public:
      *  ###### OVERLOADING SUBJECT METHODS ##
      *  #####################################
      */
-    //void Attach(WSG50RosObserver * observer_, unsigned int msgId_);
-    //void Detach(WSG50RosObserver * observer_, unsigned int msgId_);
+    void Attach(WSG50Observer * observer_, unsigned int msgId_);
+    void Detach(WSG50Observer * observer_, unsigned int msgId_);
 
 private:
 

@@ -13,7 +13,7 @@
 #include <thread>
 #include <vector>
 #include "WSG50Observer.h"
-
+#include "WSG50Subject.h"
 #define MSGBUFFERSIZE 500
 
 //! Typedef for Callback methods
@@ -27,7 +27,7 @@ typedef std::function<void(TRESPONSE)> callbackTRESPONSE;
  * handle TCP-communication with the gripper
  *
  */
-class WSG50Communicator
+class WSG50Communicator : public WSG50Subject
 {
 public:
 

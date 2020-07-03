@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <stdlib.h>
-#include </usr/local/include/boost/bind/bind.hpp>
+#include </usr/include/boost/bind/bind.hpp>
 //#include <ros/ros.h>
 
 using namespace boost;
@@ -227,7 +227,7 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
     if(_iMsgBufferSize <= 0)
         this->clearIMsgBuffer();
 
-
+    cout << "EC: " << ec << std::endl;
     if(!ec)
     {
         logmsg.str("");
@@ -235,15 +235,17 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
         // ***************************************************
         // read next data packet from tcp socket
         //
+cout << "1: " << ec << std::endl;
         sock.async_read_some(boost::asio::buffer( buffer ),
                              boost::bind(&WSG50Communicator::read_handler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 
         // convert message into array
         //
+        cout << "2: " << ec << std::endl;
         responseTCPBuffer = (unsigned char * ) buffer.data();
         this->_respTCPBuffAllocated = true;
 //        if(DEBUG) this->printHexArray(responseTCPBuffer, len);
-
+cout << "3: " << ec << std::endl;
 //        logmsg << std::hex << std::string((char *) responseTCPBuffer, 0, len).c_str() << std::dec << endl;
 
         // *****************************************************
@@ -251,14 +253,16 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
         // this is necessary, because the tcp-socket may deliver concatenated messages instead of single messages
         //
         pos1 = findOccurence(completeResponse, len, delimiter, 3, searchPos);
-
+cout << "4: " << ec << std::endl;
         // *************************************************************
         // EXCEPTION: if there is a message split between two tcp-data packets
         // if first position is not 0, then the messages have been split
         //
+        cout << "Pos: " << pos1 << std::endl;
         if(pos1 != 0) {
             // check if there is another part inside the buffer
             //
+            cout << "4.1: " << ec << std::endl;
             if(_iMsgBufferSize > 0) {
                 // add the other parts to the buffer
                 //
@@ -286,7 +290,7 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
 
                 // send update response
                 //
-                //_observer->update(&responseMsg);
+                _observer->update(&responseMsg);
 
                 // clear the buffer again
                 //
@@ -306,6 +310,7 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
         count = 0;
         while(pos1 != -1 && count < 200)
         {
+            cout << "Count: " << count << std::endl;
             searchPos = pos1 + 4;
             pos2 = findOccurence(completeResponse, len, delimiter, 3, searchPos);
 
@@ -325,7 +330,7 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
                 bufflength = 0;
                 return;
             }
-
+            cout << "6: " << ec << std::endl;
 //            if(DEBUG) cout << ("loop-count = %d; found second occurence at index = %d; msg length = %d", count, pos2, bufflength);
 
 
@@ -361,11 +366,12 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
 
             count++;
 
-
+            cout << "7: " << ec << std::endl;
             // *****************************************************
             // create TRESPONSE Message
             //
             responseMsg = createTRESPONSE(partResponse, bufflength);
+            cout << "8: " << responseMsg.data << std::endl;
 //            if(DEBUG) printTRESPONSE(responseMsg);
 
 //            cout << ("response message length = %d", responseMsg.length);
@@ -401,6 +407,7 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
             //
             if(responseMsg.status_code != E_SUCCESS && DEBUG) {
                 printErrorCode(responseMsg.status_code);
+                cout << std::endl;
             }
 
             // ******************************************************
@@ -425,7 +432,10 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
             // ******************************************************
             // always call Observer and hand over response message
             //
-            //_observer->update(&responseMsg);
+            cout << "9: " << responseMsg.length << std::endl;
+            cout << "partResponse: " << partResponse << std::endl;
+            _observer->update(&responseMsg);
+            cout << "10: " << responseMsg.length << std::endl;
 
 
             // ******************************************************
@@ -435,8 +445,9 @@ void WSG50Communicator::read_handler(const boost::system::error_code &ec,
             delete[] partResponse;
         }
     } else {
-        cout << ("an error occured when the read_handler was called");
+        cout << ("an error occured when the read_handler was called") << std::endl;
         std::cout << ec.message() << std::endl;
+        cout << ("End") << std::endl;
     }
 }
 
@@ -488,11 +499,11 @@ void WSG50Communicator::connect()
 // attach new observer
 // which will be updated once messages have been received
 //
-/*void WSG50Communicator::Attach(WSG50Observer *observer)
+void WSG50Communicator::Attach(WSG50Observer *observer)
 {
     this->_observer = observer;
 }
-*/
+
 
 // write message to socket
 //
